@@ -1,0 +1,2 @@
+def solver(grid):
+	pass
