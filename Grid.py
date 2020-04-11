@@ -74,7 +74,7 @@ class Grid:
 		return self.row(row_index)[col_index]
 
 	def set_nb(self, row_index, col_index, value):
-		pass
+		self.numbers[row_index * col_index] = value
 
 	def __str__(self):
 		h_pad = 2
