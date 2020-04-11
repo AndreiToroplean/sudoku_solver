@@ -5,12 +5,12 @@ class Grid:
 		self.h_cells = 3
 		self.v_cells = 3
 
-		self.numbers = ''.join(self._parse_nb(x) for x in numbers)
+		self.numbers = [self._parse_nb(x) for x in numbers]
 
 	@staticmethod
 	def _parse_nb(nb):
 		accepted_numbers = "123456789"
-		unknown_nb = "."
+		unknown_nb = '.'
 		try:
 			nb_str = str(nb)
 			if nb_str in accepted_numbers:
@@ -56,10 +56,10 @@ class Grid:
 			]
 
 	def col(self, index):
-		return ''.join(row[index] for row in self.rows)
+		return [row[index] for row in self.rows]
 
 	def cell(self, cell_row_index, cell_col_index):
-		rtn = ""
+		rtn = []
 		for row in self.rows[
 				self.v_nb_per_cell * cell_row_index:
 				self.v_nb_per_cell * (cell_row_index+1)
@@ -70,15 +70,18 @@ class Grid:
 					]
 		return rtn
 
-	def number(self, row_index, col_index):
+	def get_nb(self, row_index, col_index):
 		return self.row(row_index)[col_index]
+
+	def set_nb(self, row_index, col_index, value):
+		pass
 
 	def __str__(self):
 		h_pad = 2
 		v_pad = 0
-		h_f_seg = "-" * ((h_pad + 1) * self.h_nb_per_cell + h_pad)
+		h_f_seg = '-' * ((h_pad + 1) * self.h_nb_per_cell + h_pad)
 		h_f_line = f"+{h_f_seg}" * self.h_cells + "+\n"
-		h_e_seg = " " * ((h_pad + 1) * self.h_nb_per_cell + h_pad)
+		h_e_seg = ' ' * ((h_pad + 1) * self.h_nb_per_cell + h_pad)
 		h_e_line = f"|{h_e_seg}" * self.h_cells + "|\n"
 
 		rtn = ""
@@ -87,8 +90,8 @@ class Grid:
 				rtn += h_f_line + h_e_line * v_pad
 			for number_index, number in enumerate(row):
 				if number_index % self.h_nb_per_cell == 0:
-					rtn += "|" + " " * h_pad
-				rtn += str(number) + " " * h_pad
+					rtn += '|' + ' ' * h_pad
+				rtn += str(number) + ' ' * h_pad
 			rtn += "|\n" + h_e_line * v_pad
 		rtn += h_f_line
 
