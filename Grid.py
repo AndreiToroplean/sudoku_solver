@@ -1,12 +1,11 @@
 class Grid:
-
 	def __init__(self, numbers):
 		self.h_nb_per_cell = 3
 		self.v_nb_per_cell = 3
 		self.h_cells = 3
 		self.v_cells = 3
 
-		self.numbers = "".join(self._parse_nb(x) for x in numbers)
+		self.numbers = ''.join(self._parse_nb(x) for x in numbers)
 
 	@staticmethod
 	def _parse_nb(nb):
@@ -30,13 +29,25 @@ class Grid:
 
 	@property
 	def rows(self):
+		rtn = []
 		for row_index in range(self.rows_len):
-			yield self.row(row_index)
+			rtn.append(self.row(row_index))
+		return rtn
 
 	@property
 	def cols(self):
+		rtn = []
 		for col_index in range(self.row_len):
-			yield self.col(col_index)
+			rtn.append(self.col(col_index))
+		return rtn
+
+	@property
+	def cells(self):
+		rtn = []
+		for cell_row_index in range(self.h_cells):
+			for cell_col_index in range(self.v_cells):
+				rtn.append(self.cell(cell_row_index, cell_col_index))
+		return rtn
 
 	def row(self, index):
 		return self.numbers[
@@ -46,6 +57,21 @@ class Grid:
 
 	def col(self, index):
 		return ''.join(row[index] for row in self.rows)
+
+	def cell(self, cell_row_index, cell_col_index):
+		rtn = ""
+		for row in self.rows[
+				self.v_nb_per_cell * cell_row_index:
+				self.v_nb_per_cell * (cell_row_index+1)
+				]:
+			rtn += row[
+					self.h_nb_per_cell * cell_col_index:
+					self.h_nb_per_cell * (cell_col_index+1)
+					]
+		return rtn
+
+	def number(self, row_index, col_index):
+		return self.row(row_index)[col_index]
 
 	def __str__(self):
 		h_pad = 2
