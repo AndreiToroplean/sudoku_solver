@@ -6,10 +6,10 @@ class Grid:
 		self.h_cells = 3
 		self.v_cells = 3
 
-		self.numbers = "".join(self.parse_nb(x) for x in numbers)
+		self.numbers = "".join(self._parse_nb(x) for x in numbers)
 
 	@staticmethod
-	def parse_nb(nb):
+	def _parse_nb(nb):
 		accepted_numbers = "123456789"
 		unknown_nb = "."
 		try:
@@ -20,6 +20,33 @@ class Grid:
 			pass
 		return unknown_nb
 
+	@property
+	def row_len(self):
+		return self.h_nb_per_cell * self.h_cells
+
+	@property
+	def rows_len(self):
+		return self.v_nb_per_cell * self.v_cells
+
+	@property
+	def rows(self):
+		for row_index in range(self.rows_len):
+			yield self.row(row_index)
+
+	@property
+	def cols(self):
+		for col_index in range(self.row_len):
+			yield self.col(col_index)
+
+	def row(self, index):
+		return self.numbers[
+			self.row_len * index:
+			self.row_len * (index+1)
+			]
+
+	def col(self, index):
+		return ''.join(row[index] for row in self.rows)
+
 	def __str__(self):
 		h_pad = 2
 		v_pad = 0
@@ -27,22 +54,19 @@ class Grid:
 		h_f_line = f"+{h_f_seg}" * self.h_cells + "+\n"
 		h_e_seg = " " * ((h_pad + 1) * self.h_nb_per_cell + h_pad)
 		h_e_line = f"|{h_e_seg}" * self.h_cells + "|\n"
-		grid_str = ""
-		for cell_row_index in range(self.v_cells):
-			grid_str += h_f_line
-			grid_str += h_e_line * v_pad
-			for line_index in range(self.v_nb_per_cell):
-				for index, number in enumerate(self.numbers[cell_row_index*line_index
-					:cell_row_index*line_index+(self.h_nb_per_cell * self.h_cells)]):
-					if index % self.h_nb_per_cell == 0:
-						grid_str += "|"
-						grid_str += " " * h_pad
-					grid_str += str(number)
-					grid_str += " " * h_pad
-				grid_str += "|\n"
-				grid_str += h_e_line * v_pad
-		grid_str += h_f_line
-		return grid_str
+
+		rtn = ""
+		for row_index, row in enumerate(self.rows):
+			if row_index % self.v_nb_per_cell == 0:
+				rtn += h_f_line + h_e_line * v_pad
+			for number_index, number in enumerate(row):
+				if number_index % self.h_nb_per_cell == 0:
+					rtn += "|" + " " * h_pad
+				rtn += str(number) + " " * h_pad
+			rtn += "|\n" + h_e_line * v_pad
+		rtn += h_f_line
+
+		return rtn
 
 	def __repr__(self):
 		return f"Grid({repr(self.numbers)})"
