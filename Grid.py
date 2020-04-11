@@ -1,11 +1,24 @@
 class Grid:
+
 	def __init__(self, numbers):
 		self.h_nb_per_cell = 3
 		self.v_nb_per_cell = 3
 		self.h_cells = 3
 		self.v_cells = 3
 
-		self.numbers = numbers
+		self.numbers = "".join(self.parse_nb(x) for x in numbers)
+
+	@staticmethod
+	def parse_nb(nb):
+		accepted_numbers = "123456789"
+		unknown_nb = "."
+		try:
+			nb_str = str(nb)
+			if nb_str in accepted_numbers:
+				return nb_str
+		except ValueError:
+			pass
+		return unknown_nb
 
 	def __str__(self):
 		h_pad = 2
@@ -24,7 +37,7 @@ class Grid:
 					if index % self.h_nb_per_cell == 0:
 						grid_str += "|"
 						grid_str += " " * h_pad
-					grid_str += number
+					grid_str += str(number)
 					grid_str += " " * h_pad
 				grid_str += "|\n"
 				grid_str += h_e_line * v_pad
@@ -32,7 +45,7 @@ class Grid:
 		return grid_str
 
 	def __repr__(self):
-		return f"Grid{tuple(self.numbers)}"
+		return f"Grid({repr(self.numbers)})"
 
 	def draw(self):
 		print(self)
