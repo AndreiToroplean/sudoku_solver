@@ -27,6 +27,27 @@ class Grid:
 	def rows_len(self):
 		return self.v_nb_per_cell * self.v_cells
 
+	def row(self, index):
+		return self.numbers[
+			self.row_len * index:
+			self.row_len * (index+1)
+			]
+
+	def col(self, index):
+		return [row[index] for row in self.rows]
+
+	def cell(self, cell_row_index, cell_col_index):
+		rtn = []
+		for row in self.rows[
+				self.v_nb_per_cell * cell_row_index:
+				self.v_nb_per_cell * (cell_row_index+1)
+				]:
+			rtn += row[
+					self.h_nb_per_cell * cell_col_index:
+					self.h_nb_per_cell * (cell_col_index+1)
+					]
+		return rtn
+
 	@property
 	def rows(self):
 		rtn = []
@@ -49,32 +70,15 @@ class Grid:
 				rtn.append(self.cell(cell_row_index, cell_col_index))
 		return rtn
 
-	def row(self, index):
-		return self.numbers[
-			self.row_len * index:
-			self.row_len * (index+1)
-			]
+	def get_nb(self, index, col_index=None):
+		if col_index is None:
+			return self.numbers[index]
+		return self.numbers[index * col_index]
 
-	def col(self, index):
-		return [row[index] for row in self.rows]
-
-	def cell(self, cell_row_index, cell_col_index):
-		rtn = []
-		for row in self.rows[
-				self.v_nb_per_cell * cell_row_index:
-				self.v_nb_per_cell * (cell_row_index+1)
-				]:
-			rtn += row[
-					self.h_nb_per_cell * cell_col_index:
-					self.h_nb_per_cell * (cell_col_index+1)
-					]
-		return rtn
-
-	def get_nb(self, row_index, col_index):
-		return self.row(row_index)[col_index]
-
-	def set_nb(self, row_index, col_index, value):
-		self.numbers[row_index * col_index] = value
+	def set_nb(self, value, index, col_index=None):
+		if col_index is None:
+			self.numbers[index] = value
+		self.numbers[index * col_index] = value
 
 	def __str__(self):
 		h_pad = 2
