@@ -130,6 +130,7 @@ class Grid:
 		if proposition in self.cell_from_index(index):
 			return False
 
+		# print("ok")
 		return True
 
 	def __str__(self):
