@@ -1,23 +1,25 @@
 class Grid:
+	unknown_nb = '.'
+
 	def __init__(self, numbers):
-		self.h_nb_per_cell = 3
-		self.v_nb_per_cell = 3
-		self.h_cells = 3
-		self.v_cells = 3
+		self.size = 3
+		self.h_nb_per_cell = self.size
+		self.v_nb_per_cell = self.size
+		self.h_cells = self.size
+		self.v_cells = self.size
+		self.accepted_numbers = list("1234567890abcdef")[:self.size**2]
 
 		self.numbers = [self._parse_nb(x) for x in numbers]
 
-	@staticmethod
-	def _parse_nb(nb):
-		accepted_numbers = "123456789"
-		unknown_nb = '.'
+	def _parse_nb(self, nb):
 		try:
 			nb_str = str(nb)
-			if nb_str in accepted_numbers:
-				return nb_str
 		except ValueError:
 			pass
-		return unknown_nb
+		else:
+			if nb_str in self.accepted_numbers:
+				return nb_str
+		return self.unknown_nb
 
 	@property
 	def row_len(self):
@@ -27,24 +29,24 @@ class Grid:
 	def rows_len(self):
 		return self.v_nb_per_cell * self.v_cells
 
-	def row(self, index):
+	def row(self, row_index):
 		return self.numbers[
-			self.row_len * index:
-			self.row_len * (index+1)
+			self.row_len * row_index:
+			self.row_len * (row_index + 1)
 			]
 
-	def col(self, index):
-		return [row[index] for row in self.rows]
+	def col(self, col_index):
+		return [row[col_index] for row in self.rows]
 
-	def cell(self, cell_row_index, cell_col_index):
+	def cell(self, cell_index):
 		rtn = []
 		for row in self.rows[
-				self.v_nb_per_cell * cell_row_index:
-				self.v_nb_per_cell * (cell_row_index+1)
+				self.v_nb_per_cell * cell_index[0]:
+				self.v_nb_per_cell * (cell_index[0]+1)
 				]:
 			rtn += row[
-					self.h_nb_per_cell * cell_col_index:
-					self.h_nb_per_cell * (cell_col_index+1)
+					self.h_nb_per_cell * cell_index[1]:
+					self.h_nb_per_cell * (cell_index[1]+1)
 					]
 		return rtn
 
@@ -67,18 +69,68 @@ class Grid:
 		rtn = []
 		for cell_row_index in range(self.h_cells):
 			for cell_col_index in range(self.v_cells):
-				rtn.append(self.cell(cell_row_index, cell_col_index))
+				rtn.append(self.cell((cell_row_index, cell_col_index)))
 		return rtn
 
-	def get_nb(self, index, col_index=None):
-		if col_index is None:
-			return self.numbers[index]
-		return self.numbers[index * col_index]
+	def to_index1(self, index):
+		try:
+			return index[0] * self.row_len + index[1]
+		except TypeError:
+			return index
+		except IndexError:
+			return index[0]
 
-	def set_nb(self, value, index, col_index=None):
-		if col_index is None:
-			self.numbers[index] = value
-		self.numbers[index * col_index] = value
+	def to_index2(self, index):
+		try:
+			row_index = int(index/self.row_len)
+		except TypeError:
+			return index
+		else:
+			col_index = index - row_index * self.row_len
+			return row_index, col_index
+
+	def to_cell_index(self, index):
+		index = self.to_index2(index)
+		return int(index[0]/self.v_cells), int(index[1]/self.h_cells)
+
+	def get_nb(self, index):
+		return self.numbers[self.to_index1(index)]
+
+	def set_nb(self, index, value):
+		self.numbers[self.to_index1(index)] = value
+
+	def row_from_index(self, index):
+		row_index, _ = self.to_index2(index)
+		return self.row(row_index)
+
+	def col_from_index(self, index):
+		_, col_index = self.to_index2(index)
+		return self.col(col_index)
+
+	def cell_from_index(self, index):
+		cell_index = self.to_cell_index(index)
+		return self.cell(cell_index)
+
+	def is_completed(self, index):
+		if self.get_nb(index) == self.unknown_nb:
+			return False
+		return True
+
+	def is_valid(self, index, proposition):
+		# print("proposition", proposition)
+		if self.is_completed(index):
+			return False
+		# print("row", self.row_from_index(index))
+		if proposition in self.row_from_index(index):
+			return False
+		# print("col", self.col_from_index(index))
+		if proposition in self.col_from_index(index):
+			return False
+		# print("cell", self.cell_from_index(index))
+		if proposition in self.cell_from_index(index):
+			return False
+
+		return True
 
 	def __str__(self):
 		h_pad = 2
@@ -95,7 +147,7 @@ class Grid:
 			for number_index, number in enumerate(row):
 				if number_index % self.h_nb_per_cell == 0:
 					rtn += '|' + ' ' * h_pad
-				rtn += str(number) + ' ' * h_pad
+				rtn += number + ' ' * h_pad
 			rtn += "|\n" + h_e_line * v_pad
 		rtn += h_f_line
 
