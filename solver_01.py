@@ -1,5 +1,5 @@
 def solver(grid):
-    size = grid.size ** 3
+    size = grid.size ** 4
 
     # Building the possibilities grid:
     completion = 0.0
@@ -13,6 +13,7 @@ def solver(grid):
     initial_nb_completed = completion
 
     # Filling the grid until complete or stuck:
+    iterations = 0
     while completion < size:
         previous_completion = completion
         for index, possibilities in enumerate(possibilities_grid):
@@ -33,7 +34,10 @@ def solver(grid):
 
             possibilities_grid[index] = new_possibilities
 
+        iterations += 1
+
         if previous_completion == completion:
-            print("Got stuck.", completion - initial_nb_completed)
+            print(f"Got stuck. Took it from {initial_nb_completed*100/size:.1f}% "
+                  f"to {completion*100/size:.1f}% completed over {iterations} iterations.")
             print(possibilities_grid)
             break
