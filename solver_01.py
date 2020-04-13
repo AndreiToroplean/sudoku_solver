@@ -1,51 +1,51 @@
-def _calc_completion(possibilities_len, row_len):
-    return (row_len - possibilities_len) / ((row_len - 1) * possibilities_len)
+class Solver:
+    def __init__(self, grid, base_solver=None):
+        self.grid = grid
+        self.numbers_len = len(self.grid.numbers)
 
+        if base_solver is None:
+            self.completion = 0.0
+            self.possibilities_grid = []
+            for index in range(self.numbers_len):
+                if self.grid.is_completed(index):
+                    self.possibilities_grid.append(None)
+                    self.completion += 1
+                    continue
+                self.possibilities_grid.append(self.grid.accepted_numbers.copy())
+        else:
+            self.completion = base_solver.completion
+            self.possibilities_grid = base_solver.possibilities_grid
 
-def solver(grid):
-    numbers_len = len(grid.numbers)
+        self.initial_completion = self.completion
 
-    # Building the possibilities grid:
-    completion = 0.0
-    possibilities_grid = []
-    for index in range(numbers_len):
-        if grid.is_completed(index):
-            possibilities_grid.append(None)
-            completion += 1
-            continue
-        possibilities_grid.append(grid.accepted_numbers.copy())
-    initial_completion = completion
+    def solve(self):
+        while self.completion < self.numbers_len:
+            previous_completion = self.completion
+            for index, possibilities in enumerate(self.possibilities_grid):
+                if possibilities is None:
+                    continue
 
-    iterations = 0
-    guesses = 0
-    backtracks = 0
+                checked_possibilities = []
+                for proposition in possibilities:
+                    if self.grid.is_valid(index, proposition):
+                        checked_possibilities.append(proposition)
 
-    # Filling the grid until complete or stuck:
-    while completion < numbers_len:
-        previous_completion = completion
-        for index, possibilities in enumerate(possibilities_grid):
-            if possibilities is None:
-                continue
+                self.completion += (self._calc_completion(len(checked_possibilities), self.grid.row_len)
+                               - self._calc_completion(len(possibilities), self.grid.row_len))
 
-            checked_possibilities = []
-            for proposition in possibilities:
-                if grid.is_valid(index, proposition):
-                    checked_possibilities.append(proposition)
+                if len(checked_possibilities) == 1:
+                    self.grid.set_nb(index, checked_possibilities[0])
+                    self.possibilities_grid[index] = None
+                    continue
 
-            completion += (_calc_completion(len(checked_possibilities), grid.row_len)
-                           - _calc_completion(len(possibilities), grid.row_len))
+                self.possibilities_grid[index] = checked_possibilities
 
-            if len(checked_possibilities) == 1:
-                grid.set_nb(index, checked_possibilities[0])
-                possibilities_grid[index] = None
-                continue
+            if previous_completion == self.completion:
+                break
 
-            possibilities_grid[index] = checked_possibilities
+        print(
+            f"Took it from {self.initial_completion * 100 / self.numbers_len:.1f}% to {self.completion * 100 / self.numbers_len:.1f}% completed.")
 
-        iterations += 1
-
-        if previous_completion == completion:
-            break
-
-    print(f"Took it from {initial_completion*100/numbers_len:.1f}% "
-          f"to {completion*100/numbers_len:.1f}% completed over {iterations} iterations.")
+    @staticmethod
+    def _calc_completion(possibilities_len, row_len):
+        return (row_len - possibilities_len) / ((row_len - 1) * possibilities_len)
