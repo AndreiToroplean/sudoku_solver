@@ -37,7 +37,8 @@ def solver(grid):
         iterations += 1
 
         if previous_completion == completion:
-            print(f"Got stuck. Took it from {initial_nb_completed*100/size:.1f}% "
-                  f"to {completion*100/size:.1f}% completed over {iterations} iterations.")
-            print(possibilities_grid)
+            print(f"Got stuck.", possibilities_grid, sep='\n')
             break
+
+    print(f"Took it from {initial_nb_completed*100/size:.1f}% "
+          f"to {completion*100/size:.1f}% completed over {iterations} iterations.")
