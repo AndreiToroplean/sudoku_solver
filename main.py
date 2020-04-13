@@ -13,6 +13,3 @@ if __name__ == "__main__":
 
 	solver = Solver(grid)
 	solver.solve()
-
-	print("Solution:")
-	grid.draw()
