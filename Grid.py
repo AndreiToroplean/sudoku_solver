@@ -159,6 +159,3 @@ class Grid:
 
 	def draw(self):
 		print(self)
-
-	def solve(self, solver):
-		solver(self)
