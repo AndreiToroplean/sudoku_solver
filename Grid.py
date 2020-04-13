@@ -157,5 +157,8 @@ class Grid:
 	def __repr__(self):
 		return f"Grid({repr(self.numbers)})"
 
+	def get_numbers_as_string(self):
+		return ''.join(self.numbers)
+
 	def draw(self):
 		print(self)
