@@ -1,44 +1,51 @@
+def _calc_completion(possibilities_len, row_len):
+    return (row_len - possibilities_len) / ((row_len - 1) * possibilities_len)
+
+
 def solver(grid):
-    size = grid.size ** 4
+    numbers_len = len(grid.numbers)
 
     # Building the possibilities grid:
     completion = 0.0
     possibilities_grid = []
-    for index in range(size):
+    for index in range(numbers_len):
         if grid.is_completed(index):
             possibilities_grid.append(None)
             completion += 1
             continue
         possibilities_grid.append(grid.accepted_numbers.copy())
-    initial_nb_completed = completion
+    initial_completion = completion
+
+    iterations = 0
+    guesses = 0
+    backtracks = 0
 
     # Filling the grid until complete or stuck:
-    iterations = 0
-    while completion < size:
+    while completion < numbers_len:
         previous_completion = completion
         for index, possibilities in enumerate(possibilities_grid):
             if possibilities is None:
                 continue
 
-            new_possibilities = []
+            checked_possibilities = []
             for proposition in possibilities:
                 if grid.is_valid(index, proposition):
-                    new_possibilities.append(proposition)
+                    checked_possibilities.append(proposition)
 
-            completion += 1/(grid.size**2-1) * (len(possibilities)-len(new_possibilities))
+            completion += (_calc_completion(len(checked_possibilities), grid.row_len)
+                           - _calc_completion(len(possibilities), grid.row_len))
 
-            if len(new_possibilities) == 1:
-                grid.set_nb(index, new_possibilities[0])
+            if len(checked_possibilities) == 1:
+                grid.set_nb(index, checked_possibilities[0])
                 possibilities_grid[index] = None
                 continue
 
-            possibilities_grid[index] = new_possibilities
+            possibilities_grid[index] = checked_possibilities
 
         iterations += 1
 
         if previous_completion == completion:
-            print(f"Got stuck.", possibilities_grid, sep='\n')
             break
 
-    print(f"Took it from {initial_nb_completed*100/size:.1f}% "
-          f"to {completion*100/size:.1f}% completed over {iterations} iterations.")
+    print(f"Took it from {initial_completion*100/numbers_len:.1f}% "
+          f"to {completion*100/numbers_len:.1f}% completed over {iterations} iterations.")
