@@ -95,6 +95,9 @@ class Grid:
 	def set_nb(self, index, value):
 		self.numbers[self.to_index1(index)] = value
 
+	def del_nb(self, index):
+		self.numbers[self.to_index1(index)] = self.unknown_nb
+
 	def row_from_index(self, index):
 		row_index, _ = self.to_index2(index)
 		return self.row(row_index)
