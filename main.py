@@ -1,5 +1,7 @@
 from Grid import Grid
-from Solver_01 import Solver, Verbosity
+from Generator import Generator
+from Solver_01 import Solver
+from core import Verbosity
 
 if __name__ == "__main__":
 	# Real grids:
@@ -12,19 +14,30 @@ if __name__ == "__main__":
 	# Experimental grids:
 	# grid = Grid("..59..8...8.3....7.9...56........3.......2.7.2......5.9...7...6.7.4........8.3..4")
 	# grid = Grid("...9..8...8.3....7.9...56........3.......2.7.2......5.9...7...6.7.4........8.3..4")
-	grid = Grid(category=5)
+	# grid = Grid(category=4)
+
+	# Generated grids:
+	# grid = Grid("....2.48..7.....3...35.9..24.9..1....3.......61.....48........5.9..47...8...1....")
+
+	# Generate grid:
+	generator = Generator(2, verbosity=Verbosity.none)
+	grid = generator.generate()
+	print(f"Generated grid ({grid.unknowns_len} unknowns):")
+	print(repr(grid))
+	print()
 
 	print("Solving:")
 	grid.draw()
 
-	solver = Solver(grid, verbosity=Verbosity.some)
-	solutions = solver.solve(1)
+	solver = Solver(grid, verbosity=Verbosity.none)
+	max_solutions = 2
+	solutions = solver.solve(max_solutions)
 	print()
 
-	print(f"Solutions (found {len(solutions)}):")
+	print(f"Solutions (found {len(solutions)}, aksed for {max_solutions} max):")
 	for solution in solutions:
 		solution.draw()
 
-	unique_solutions = set(x.get_numbers_as_string() for x in solutions)
+	unique_solutions = set(x.numbers_as_string for x in solutions)
 	if len(unique_solutions) == len(solutions) > 1:
 		print(f"All {len(solutions)} solutions are unique.")

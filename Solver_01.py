@@ -3,18 +3,16 @@ import random
 
 from math import isclose
 
+from core import Verbosity
 
-class Verbosity:
-    none = 0
-    some = 2
-    all = 3
+# random.seed(0)
 
 
 class Solver:
     def __init__(self, grid, base_solver=None, level=0, verbosity=Verbosity.none):
         self.grid = copy.deepcopy(grid)
         self.level = level
-        self.logging_verbosity = verbosity
+        self.verbosity = verbosity
 
         if base_solver is None:
             self.completion = 0.0
@@ -37,14 +35,14 @@ class Solver:
     def from_base_solver(cls, base_solver):
         copied_solver = copy.deepcopy(base_solver)
         copied_grid = copied_solver.grid
-        return cls(copied_grid, copied_solver, copied_solver.level + 1, copied_solver.logging_verbosity)
+        return cls(copied_grid, copied_solver, copied_solver.level + 1, copied_solver.verbosity)
 
     def guess(self, index, guess, possibilities_len):
         self.possibilities_grid = [x for x in self.possibilities_grid if x[0] != index]
         self.grid.set_nb(index, guess)
         self.update_completion(1, possibilities_len)
 
-        if self.logging_verbosity >= Verbosity.some:
+        if self.verbosity >= Verbosity.some:
             print(f"Guessing {guess} at {self.grid.to_index2(index)}. Level {self.level}.")
             self.grid.draw()
 
@@ -73,7 +71,7 @@ class Solver:
                         solved_grids += new_solved_grids
 
                     if len(solved_grids) == max_solutions:
-                        if self.logging_verbosity >= Verbosity.some:
+                        if self.verbosity >= Verbosity.some:
                             print('Hit the requested max number of solutions.')
                         return solved_grids
 
@@ -85,7 +83,7 @@ class Solver:
                             checked_possibilities.append(proposition)
 
                 if len(checked_possibilities) == 0:
-                    if self.logging_verbosity >= Verbosity.some:
+                    if self.verbosity >= Verbosity.some:
                         print(f"Impossible grid. No solutions at {self.grid.to_index2(index)}. "
                               f"Back to level {self.level - 1}.")
                         self.grid.draw()
@@ -107,12 +105,12 @@ class Solver:
             if previous_completion == self.completion:
                 do_guess = True
 
-            if self.logging_verbosity >= Verbosity.all:
+            if self.verbosity >= Verbosity.all:
                 print(f"Completion: {self.completion * 100 / self.grid.numbers_len:.1f}%, level: {self.level}.")
                 self.grid.draw()
 
         solved_grids.append(self.grid)
-        if self.logging_verbosity >= Verbosity.some:
+        if self.verbosity >= Verbosity.some:
             print("Found solution:")
             self.grid.draw()
 

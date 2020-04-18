@@ -13,7 +13,6 @@ class Grid:
 		numbers_len = len(self.numbers)
 		if numbers_len < self.numbers_len:
 			self.numbers += [self.unknown_nb for _ in range(self.numbers_len - numbers_len)]
-			print("Autocompleted incomplete grid.")
 
 	def _parse_nb(self, nb):
 		try:
@@ -150,10 +149,15 @@ class Grid:
 		return rtn
 
 	def __repr__(self):
-		return f"Grid({repr(self.numbers)})"
+		return f"Grid(\"{''.join(self.numbers)}\")"
 
-	def get_numbers_as_string(self):
+	@property
+	def numbers_as_string(self):
 		return ''.join(self.numbers)
+
+	@property
+	def unknowns_len(self):
+		return self.numbers.count(self.unknown_nb)
 
 	def draw(self):
 		print(self)
