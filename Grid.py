@@ -2,18 +2,15 @@ class Grid:
 	unknown_nb = '.'
 
 	def __init__(self, numbers="", category=3):
+		assert category > 1, "category should be at least 2."
 		self.category = category
-		self.h_nb_per_cell = self.category
-		self.v_nb_per_cell = self.category
-		self.h_cells = self.category
-		self.v_cells = self.category
-		self.accepted_numbers = list("1234567890abcdef")[:self.category ** 2]
-		# todo: deal with the situation where category > 4.
+		self.row_len = self.category ** 2
+		self.accepted_numbers = [str(x) for x in range(1, self.row_len + 1)]
 
 		self.numbers = [self._parse_nb(x) for x in numbers]
 
 		numbers_len = len(self.numbers)
-		expected_numbers_len = self.category ** 4
+		expected_numbers_len = self.row_len ** 2
 		if numbers_len < expected_numbers_len:
 			self.numbers += [self.unknown_nb for _ in range(expected_numbers_len - numbers_len)]
 			print("Autocompleted incomplete grid.")
@@ -28,14 +25,6 @@ class Grid:
 				return nb_str
 		return self.unknown_nb
 
-	@property
-	def row_len(self):
-		return self.h_nb_per_cell * self.h_cells
-
-	@property
-	def rows_len(self):
-		return self.v_nb_per_cell * self.v_cells
-
 	def row(self, row_index):
 		return self.numbers[
 			self.row_len * row_index:
@@ -48,19 +37,19 @@ class Grid:
 	def cell(self, cell_index):
 		rtn = []
 		for row in self.rows[
-				self.v_nb_per_cell * cell_index[0]:
-				self.v_nb_per_cell * (cell_index[0]+1)
+				self.category * cell_index[0]:
+				self.category * (cell_index[0] + 1)
 				]:
 			rtn += row[
-					self.h_nb_per_cell * cell_index[1]:
-					self.h_nb_per_cell * (cell_index[1]+1)
+					self.category * cell_index[1]:
+					self.category * (cell_index[1] + 1)
 					]
 		return rtn
 
 	@property
 	def rows(self):
 		rtn = []
-		for row_index in range(self.rows_len):
+		for row_index in range(self.row_len):
 			rtn.append(self.row(row_index))
 		return rtn
 
@@ -74,8 +63,8 @@ class Grid:
 	@property
 	def cells(self):
 		rtn = []
-		for cell_row_index in range(self.h_cells):
-			for cell_col_index in range(self.v_cells):
+		for cell_row_index in range(self.category):
+			for cell_col_index in range(self.category):
 				rtn.append(self.cell((cell_row_index, cell_col_index)))
 		return rtn
 
@@ -98,7 +87,7 @@ class Grid:
 
 	def to_cell_index(self, index):
 		index = self.to_index2(index)
-		return int(index[0]/self.v_cells), int(index[1]/self.h_cells)
+		return int(index[0]/self.category), int(index[1] / self.category)
 
 	def get_nb(self, index):
 		return self.numbers[self.to_index1(index)]
@@ -123,40 +112,36 @@ class Grid:
 			return False
 		return True
 
-	def is_valid(self, index, proposition):
-		# print("proposition", proposition)
-		if self.is_completed(index):
-			return False
-		# print("row", self.row_from_index(index))
-		if proposition in self.row_from_index(index):
-			return False
-		# print("col", self.col_from_index(index))
-		if proposition in self.col_from_index(index):
-			return False
-		# print("cell", self.cell_from_index(index))
-		if proposition in self.cell_from_index(index):
-			return False
+	previous_index = None
+	previous_used_numbers = set()
 
-		# print("ok")
-		return True
+	def is_valid(self, index, proposition):
+		if index == self.previous_index:
+			return proposition not in self.previous_used_numbers
+		self.previous_index = index
+
+		used_numbers = set(self.row_from_index(index)).union(self.col_from_index(index), self.cell_from_index(index))
+		self.previous_used_numbers = used_numbers
+		return proposition not in used_numbers
 
 	def __str__(self):
 		h_pad = 2
 		v_pad = 0
-		h_f_seg = '-' * ((h_pad + 1) * self.h_nb_per_cell + h_pad)
-		h_f_line = f"+{h_f_seg}" * self.h_cells + "+\n"
-		h_e_seg = ' ' * ((h_pad + 1) * self.h_nb_per_cell + h_pad)
-		h_e_line = f"|{h_e_seg}" * self.h_cells + "|\n"
+		h_f_seg = '-' * ((h_pad + 1) * self.category + h_pad)
+		h_f_line = f"+{h_f_seg}" * self.category + "+\n"
+		h_e_seg = ' ' * ((h_pad + 1) * self.category + h_pad)
+		h_e_line = f"|{h_e_seg}" * self.category + "|\n"
 
 		rtn = ""
 		for row_index, row in enumerate(self.rows):
-			if row_index % self.v_nb_per_cell == 0:
+			if row_index % self.category == 0:
 				rtn += h_f_line + h_e_line * v_pad
+			rtn += '|'
 			for number_index, number in enumerate(row):
-				if number_index % self.h_nb_per_cell == 0:
-					rtn += '|' + ' ' * h_pad
-				rtn += number + ' ' * h_pad
-			rtn += "|\n" + h_e_line * v_pad
+				if number_index % self.category == 0 and number_index != 0:
+					rtn += ' ' * h_pad + '|'
+				rtn += ' ' * (h_pad - len(number) + 1) + number
+			rtn += ' ' * h_pad + "|\n" + h_e_line * v_pad
 		rtn += h_f_line
 
 		return rtn
