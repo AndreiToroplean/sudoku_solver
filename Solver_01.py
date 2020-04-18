@@ -3,8 +3,7 @@ import random
 
 from math import isclose
 
-seed = 0
-# random.seed(seed)
+# random.seed(0)
 
 
 class Verbosity:
@@ -16,14 +15,13 @@ class Verbosity:
 class Solver:
     def __init__(self, grid, base_solver=None, level=0, verbosity=Verbosity.none):
         self.grid = grid
-        self.numbers_len = len(self.grid.numbers)
         self.level = level
         self.logging_verbosity = verbosity
 
         if base_solver is None:
             self.completion = 0.0
             self.possibilities_grid = []
-            for index in range(self.numbers_len):
+            for index in range(self.grid.numbers_len):
                 if self.grid.is_completed(index):
                     self.completion += 1
                     continue
@@ -60,7 +58,7 @@ class Solver:
         solved_grids = []
         do_guess = False
 
-        while self.completion < self.numbers_len and not isclose(self.completion, self.numbers_len):
+        while self.completion < self.grid.numbers_len and not isclose(self.completion, self.grid.numbers_len):
             previous_completion = self.completion
 
             for iter_index, possibilities_tuple in enumerate(self.possibilities_grid):
@@ -112,7 +110,7 @@ class Solver:
                 do_guess = True
 
             if self.logging_verbosity >= Verbosity.all:
-                print(f"Completion: {self.completion * 100 / self.numbers_len:.1f}%, level: {self.level}.")
+                print(f"Completion: {self.completion * 100 / self.grid.numbers_len:.1f}%, level: {self.level}.")
                 self.grid.draw()
 
         solved_grids.append(self.grid)

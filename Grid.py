@@ -5,14 +5,14 @@ class Grid:
 		assert category > 1, "category should be at least 2."
 		self.category = category
 		self.row_len = self.category ** 2
+		self.numbers_len = self.row_len ** 2
 		self.accepted_numbers = [str(x) for x in range(1, self.row_len + 1)]
 
 		self.numbers = [self._parse_nb(x) for x in numbers]
 
 		numbers_len = len(self.numbers)
-		expected_numbers_len = self.row_len ** 2
-		if numbers_len < expected_numbers_len:
-			self.numbers += [self.unknown_nb for _ in range(expected_numbers_len - numbers_len)]
+		if numbers_len < self.numbers_len:
+			self.numbers += [self.unknown_nb for _ in range(self.numbers_len - numbers_len)]
 			print("Autocompleted incomplete grid.")
 
 	def _parse_nb(self, nb):

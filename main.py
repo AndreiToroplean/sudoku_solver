@@ -1,5 +1,5 @@
 from Grid import Grid
-from Solver import Solver, Verbosity
+from Solver_01 import Solver, Verbosity
 
 if __name__ == "__main__":
 	# Real grids:
