@@ -1,5 +1,5 @@
 from Grid import Grid
-from Solver import Solver
+from Solver import Solver, Verbosity
 
 if __name__ == "__main__":
 	# Real grids:
@@ -12,12 +12,12 @@ if __name__ == "__main__":
 	# Experimental grids:
 	# grid = Grid("..59..8...8.3....7.9...56........3.......2.7.2......5.9...7...6.7.4........8.3..4")
 	# grid = Grid("...9..8...8.3....7.9...56........3.......2.7.2......5.9...7...6.7.4........8.3..4")
-	grid = Grid()
+	grid = Grid(category=5)
 
 	print("Solving:")
 	grid.draw()
 
-	solver = Solver(grid)
+	solver = Solver(grid, verbosity=Verbosity.some)
 	solutions = solver.solve(1)
 	print()
 
