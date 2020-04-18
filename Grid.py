@@ -1,15 +1,22 @@
 class Grid:
 	unknown_nb = '.'
 
-	def __init__(self, numbers):
-		self.size = 3
-		self.h_nb_per_cell = self.size
-		self.v_nb_per_cell = self.size
-		self.h_cells = self.size
-		self.v_cells = self.size
-		self.accepted_numbers = list("1234567890abcdef")[:self.size**2]
+	def __init__(self, numbers="", category=3):
+		self.category = category
+		self.h_nb_per_cell = self.category
+		self.v_nb_per_cell = self.category
+		self.h_cells = self.category
+		self.v_cells = self.category
+		self.accepted_numbers = list("1234567890abcdef")[:self.category ** 2]
+		# todo: deal with the situation where category > 4.
 
 		self.numbers = [self._parse_nb(x) for x in numbers]
+
+		numbers_len = len(self.numbers)
+		expected_numbers_len = self.category ** 4
+		if numbers_len < expected_numbers_len:
+			self.numbers += [self.unknown_nb for _ in range(expected_numbers_len - numbers_len)]
+			print("Autocompleted incomplete grid.")
 
 	def _parse_nb(self, nb):
 		try:
