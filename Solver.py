@@ -1,7 +1,5 @@
 import copy
 
-from enum import Enum
-
 
 class Solver:
     def __init__(self, grid, base_solver=None, guessing_level=0, logging_verbosity=0):
