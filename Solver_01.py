@@ -3,8 +3,6 @@ import random
 
 from math import isclose
 
-# random.seed(0)
-
 
 class Verbosity:
     none = 0
@@ -14,7 +12,7 @@ class Verbosity:
 
 class Solver:
     def __init__(self, grid, base_solver=None, level=0, verbosity=Verbosity.none):
-        self.grid = grid
+        self.grid = copy.deepcopy(grid)
         self.level = level
         self.logging_verbosity = verbosity
 
