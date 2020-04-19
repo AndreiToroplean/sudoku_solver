@@ -3,7 +3,8 @@ from generator import Generator
 from solver_01 import Solver
 from core import Verbosity
 
-if __name__ == "__main__":
+
+def main():
 	# Real grids:
 	# grid = Grid("3.59..8...8.3....7.9...56........3.......2.7.2......5.9...7...6.7.4........8.3..4")
 	# grid = Grid(".......67....9.2.468..2..3...56.37..42...95..8.3......9.8..........3...9....5.678")
@@ -41,3 +42,7 @@ if __name__ == "__main__":
 	unique_solutions = set(x.numbers_as_string for x in solutions)
 	if len(unique_solutions) == len(solutions) > 1:
 		print(f"All {len(solutions)} solutions are unique.")
+
+
+if __name__ == '__main__':
+	main()
