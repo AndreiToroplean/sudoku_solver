@@ -1,8 +1,8 @@
 import random
 import copy
 
-from Solver_01 import Solver
-from Grid import Grid
+from solver_01 import Solver
+from grid import Grid
 from core import Verbosity
 
 # random.seed(0)

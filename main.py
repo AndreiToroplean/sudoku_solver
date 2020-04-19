@@ -1,6 +1,6 @@
-from Grid import Grid
-from Generator import Generator
-from Solver_01 import Solver
+from grid import Grid
+from generator import Generator
+from solver_01 import Solver
 from core import Verbosity
 
 if __name__ == "__main__":
