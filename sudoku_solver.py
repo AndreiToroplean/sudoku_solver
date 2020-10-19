@@ -291,7 +291,7 @@ class SolutionError(Exception):
     pass
 
 
-def _parse_from_codewars(puzzle):
+def parse_from_codewars(puzzle):
     if len(puzzle) != 9:
         raise ParsingError
 
@@ -305,7 +305,7 @@ def _parse_from_codewars(puzzle):
                 grid_str += "."
                 continue
 
-            if number not in range(1, 9):
+            if number not in range(1, 10):
                 raise ParsingError
 
             grid_str += str(number)
@@ -313,18 +313,18 @@ def _parse_from_codewars(puzzle):
     return grid_str
 
 
-def _parse_for_codewars(solution):
+def parse_for_codewars(solution):
     solution_array = []
     for row_i in range(9):
         solution_array.append([])
         for nb_i in range(9):
-            solution_array.append(int(solution[row_i * nb_i]))
+            solution_array[-1].append(int(solution[row_i * 9 + nb_i]))
 
     return solution_array
 
 
 def sudoku_solver(puzzle):
-    grid_str = _parse_from_codewars(puzzle)
+    grid_str = parse_from_codewars(puzzle)
     grid = Grid(grid_str)
     solver = Solver(grid)
     solutions = solver.solve(max_solutions=2)
@@ -332,4 +332,4 @@ def sudoku_solver(puzzle):
     if n_unique_solutions != 1:
         raise SolutionError
 
-    return _parse_for_codewars(solutions[0])
+    return parse_for_codewars(solutions[0].numbers_as_string)
