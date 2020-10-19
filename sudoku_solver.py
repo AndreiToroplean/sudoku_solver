@@ -323,6 +323,17 @@ def parse_for_codewars(solution):
     return solution_array
 
 
+def random_grid_str():
+    grid_str = ""
+    for _ in range(81):
+        grid_str += str(random.randint(1, 9))
+
+        if random.random() < 0.5:
+            grid_str = grid_str[:-1] + "."
+
+    return grid_str
+
+
 def sudoku_solver(puzzle):
     grid_str = parse_from_codewars(puzzle)
     grid = Grid(grid_str)
