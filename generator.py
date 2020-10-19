@@ -1,7 +1,7 @@
 import random
 import copy
 
-from solver_01 import Solver
+from solver import Solver
 from grid import Grid
 from core import Verbosity
 
