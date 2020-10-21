@@ -301,6 +301,8 @@ def parse_from_codewars(puzzle):
             raise ParsingError
 
         for number in row:
+            if not isinstance(number, int):
+                raise ParsingError
             if number == 0:
                 grid_str += "."
                 continue
@@ -344,3 +346,4 @@ def sudoku_solver(puzzle):
         raise SolutionError
 
     return parse_for_codewars(solutions[0].numbers_as_string)
+
